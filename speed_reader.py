@@ -33,25 +33,6 @@ class Speed_reader:
             word_list.append( self.sentence_into_words(sentence) )
         return word_list
 
-    def clear(self):
-        _ = system('clear') 
-
-    def output_terminal(self):
-        for sentence in self.list_of_list_of_words: 
-
-            for i in range(0, len(sentence), 3):
-                if len(sentence) - i > 3:
-                    content = sentence[i] + " " + sentence[i+1] + " " + sentence[i+2]
-                elif len(sentence) - i == 3:
-                    content = colored(sentence[i], 'red') + " " + colored(sentence[i+1], 'red') + " " + colored(sentence[i+2], 'red')
-                elif len(sentence) - i == 2: 
-                    content = colored(sentence[i], 'red') + " " + colored(sentence[i+1], 'red')
-                else:
-                    content = colored(sentence[i], 'red')
-                print(content)
-                sleep(0.5)
-                self.clear()
-
     def get_output(self, sentence_index, word_index):
         if sentence_index < len(self.list_of_list_of_words):
             sentence = self.list_of_list_of_words[sentence_index]
