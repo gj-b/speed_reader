@@ -25,8 +25,7 @@ class Speed_reader:
         return nltk.sent_tokenize(self.file_contents)
 
     def sentence_into_words(self, sentence):
-        words = nltk.word_tokenize(sentence)
-        return words
+        return nltk.word_tokenize(sentence)
 
     def sentences_into_list_of_words(self):
         word_list = []
@@ -81,14 +80,6 @@ class Speed_reader:
             end_of_sentence_flag = 1
         return content, sentence_index, i, end_of_sentence_flag
 
-    def loop_output(self): 
-        sentence_index, word_index = 0, 0
-        while True:
-            content, sentence_index, word_index, end_of_sentence_flag = self.get_output(sentence_index, word_index)
-            print(content)
-            sleep(0.5)
-            self.clear()
-
     def start_tkinter(self): 
         
         def Draw():
@@ -96,25 +87,20 @@ class Speed_reader:
 
             frame=tk.Frame(root,width=100,height=100,relief='solid',bd=1)
             frame.place(x=10,y=10)
-            text=tk.Label(frame,text= 'HELLO')
+            text=tk.Label(frame)
             text.pack()
 
-        #CURRENT ERROR: RecursionError: maximum recursion depth exceeded
         def Refresher():
             global text 
-            content, self.sentence_index, self.word_index, end_of_sentence_flag = self.get_output(self.sentence_index, self.word_index)
-            
-            if end_of_sentence_flag: 
-                text.configure(text=content, foreground="red")
-            else: 
-                text.configure(text=content, foreground = "black")
 
+            content, self.sentence_index, self.word_index, end_of_sentence_flag = self.get_output(self.sentence_index, self.word_index)
+            text.configure(text=content, foreground="red") if end_of_sentence_flag  else text.configure(text=content, foreground = "black")
+            
             root.after(500, Refresher)
 
-        root = tk.Tk()
 
+        root = tk.Tk()
         Draw()
         Refresher()
-
         root.mainloop()
     
