@@ -36,29 +36,28 @@ class Speed_reader:
     def get_output(self, sentence_index, word_index):
         if sentence_index < len(self.list_of_list_of_words):
             sentence = self.list_of_list_of_words[sentence_index]
-        else: return 
+        else: 
+            sentence = []
 
+        num_words_left = len(sentence) - word_index
         i = word_index
 
-        if len(sentence) - i > 3:
+        if num_words_left >= 3:
             content = sentence[i] + " " + sentence[i+1] + " " + sentence[i+2]
-            i += 3
-            end_of_sentence_flag = 0
-        elif len(sentence) - i == 3:
-            content = sentence[i] + " " + sentence[i+1] + " " + sentence[i+2]
-            sentence_index += 1
-            i = 0
-            end_of_sentence_flag = 1
-        elif len(sentence) - i == 2: 
+        elif num_words_left == 2: 
             content = sentence[i] + " " + sentence[i+1]
-            sentence_index += 1
-            i = 0
-            end_of_sentence_flag = 1
-        else:
+        elif num_words_left == 1: 
             content = sentence[i]
-            sentence_index += 1
+
+        if num_words_left > 3:
+            i +=3
+            end_of_sentence_flag = 0
+            sentence_index += 0
+        else: 
             i = 0
             end_of_sentence_flag = 1
+            sentence_index += 1
+
         return content, sentence_index, i, end_of_sentence_flag
 
     def start_tkinter(self): 
