@@ -14,6 +14,9 @@ class Speed_reader:
         self.all_sentences = self.file_into_sentences()
         self.list_of_list_of_words = self.sentences_into_list_of_words()
 
+        self.sentence_index = 0
+        self.word_index = 0
+
     def read_file(self): 
         with open(self.file_name) as f: 
             return f.read()
@@ -51,36 +54,43 @@ class Speed_reader:
                 self.clear()
 
     def get_output(self, sentence_index, word_index):
-        sentence = self.list_of_list_of_words[sentence_index] 
+        if sentence_index < len(self.list_of_list_of_words):
+            sentence = self.list_of_list_of_words[sentence_index]
+        else: return 
+
         i = word_index
 
         if len(sentence) - i > 3:
             content = sentence[i] + " " + sentence[i+1] + " " + sentence[i+2]
             i += 3
+            end_of_sentence_flag = 0
         elif len(sentence) - i == 3:
-            content = colored(sentence[i], 'red') + " " + colored(sentence[i+1], 'red') + " " + colored(sentence[i+2], 'red')
+            content = sentence[i] + " " + sentence[i+1] + " " + sentence[i+2]
             sentence_index += 1
             i = 0
+            end_of_sentence_flag = 1
         elif len(sentence) - i == 2: 
-            content = colored(sentence[i], 'red') + " " + colored(sentence[i+1], 'red')
+            content = sentence[i] + " " + sentence[i+1]
             sentence_index += 1
             i = 0
+            end_of_sentence_flag = 1
         else:
-            content = colored(sentence[i], 'red')
+            content = sentence[i]
             sentence_index += 1
             i = 0
-        return content, sentence_index, i
+            end_of_sentence_flag = 1
+        return content, sentence_index, i, end_of_sentence_flag
 
     def loop_output(self): 
         sentence_index, word_index = 0, 0
         while True:
-            content, sentence_index, word_index = self.get_output(sentence_index, word_index)
+            content, sentence_index, word_index, end_of_sentence_flag = self.get_output(sentence_index, word_index)
             print(content)
             sleep(0.5)
             self.clear()
 
     def start_tkinter(self): 
-
+        
         def Draw():
             global text
 
@@ -90,38 +100,21 @@ class Speed_reader:
             text.pack()
 
         #CURRENT ERROR: RecursionError: maximum recursion depth exceeded
-        def Refresher(sentence_index, word_index):
+        def Refresher():
             global text 
-            content, sentence_index, word_index = self.get_output(sentence_index, word_index)
-            text.configure(text=content)
-            root.after(10000, Refresher(sentence_index, word_index))
-            return sentence_index, word_index
+            content, self.sentence_index, self.word_index, end_of_sentence_flag = self.get_output(self.sentence_index, self.word_index)
+            
+            if end_of_sentence_flag: 
+                text.configure(text=content, foreground="red")
+            else: 
+                text.configure(text=content, foreground = "black")
+
+            root.after(500, Refresher)
 
         root = tk.Tk()
-        #root.title = ("Speed Reader")
-        #root.geometry("500x500")
 
-        Draw()
-        Refresher(0,0)
-
-        root.mainloop()
-
-    def tkinter_test(self): 
-        def Draw():
-            global text
-
-            frame=tk.Frame(root,width=100,height=100,relief='solid',bd=1)
-            frame.place(x=10,y=10)
-            text=tk.Label(frame,text='HELLO')
-            text.pack()
-
-        def Refresher():
-            global text
-            text.configure(text=self.get_output(0,0))
-            root.after(1000, Refresher) # every second...
-
-        root=tk.Tk()
         Draw()
         Refresher()
+
         root.mainloop()
     
