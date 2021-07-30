@@ -16,8 +16,11 @@ class Speed_reader:
 
         self.sentence_index = 0
         self.word_index = 0
+        self.content = ""
+        self.end_of_sentence_flag = 0
 
         self.text_speed = text_speed
+        self.pause_flag = 0
 
     def read_file(self): 
         with open(self.file_name) as f: 
@@ -50,6 +53,8 @@ class Speed_reader:
             content = sentence[i] + " " + sentence[i+1]
         elif num_words_left == 1: 
             content = sentence[i]
+        else: 
+            content = ""
 
         if num_words_left > 3:
             i +=3
@@ -66,6 +71,14 @@ class Speed_reader:
         if self.text_speed + speed_change > 0:
             self.text_speed = self.text_speed + speed_change
 
+    def change_pause_flag(self):
+        self.pause_flag = not self.pause_flag
+
+    def go_back_x_sentences(self, num_sentences=10):
+        if self.sentence_index - num_sentences > 0: 
+            self.sentence_index = self.sentence_index - num_sentences
+            self.word_index = 0
+
     def start_tkinter(self): 
         
         def Speed_up():
@@ -76,11 +89,22 @@ class Speed_reader:
             speed_down_button = tk.Button(root, text="Speed Down", command= lambda: self.change_text_speed(25))
             speed_down_button.pack()
 
+        def Pause():
+            pause_button = tk.Button(root, text="Pause", command= lambda:self.change_pause_flag())
+            pause_button.pack()
+
+        def Go_back_ten_sentences():
+            go_back_button = tk.Button(root, text = "Go Back", command= lambda: self.go_back_x_sentences(10))
+            go_back_button.pack()
+
         def Draw():
             global text
-
-            Speed_up()
+            
             Speed_down()
+            Pause()
+            Speed_up()
+            
+            Go_back_ten_sentences()
 
             frame=tk.Frame(root,width=100,height=100,relief='solid',bd=1)
             frame.place(x=200,y=200)
@@ -91,9 +115,10 @@ class Speed_reader:
 
         def Refresher():
             global text 
-
-            content, self.sentence_index, self.word_index, end_of_sentence_flag = self.get_output(self.sentence_index, self.word_index)
-            text.configure(text=content, foreground="red") if end_of_sentence_flag  else text.configure(text=content, foreground = "black")
+            if not self.pause_flag:
+                self.content, self.sentence_index, self.word_index, self.end_of_sentence_flag = self.get_output(self.sentence_index, self.word_index)
+                
+            text.configure(text=self.content, foreground="red") if self.end_of_sentence_flag  else text.configure(text=self.content, foreground = "black")
             
             root.after(self.text_speed, Refresher)
 
@@ -103,4 +128,3 @@ class Speed_reader:
         Draw()
         Refresher()
         root.mainloop()
-    
