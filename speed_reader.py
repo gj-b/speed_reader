@@ -6,7 +6,7 @@ from termcolor import colored
 import tkinter as tk
 
 class Speed_reader:
-    def __init__(self, file_name) -> None:
+    def __init__(self, file_name, text_speed=500) -> None:
         
         self.file_name = file_name
         self.file_contents = self.read_file()
@@ -16,6 +16,8 @@ class Speed_reader:
 
         self.sentence_index = 0
         self.word_index = 0
+
+        self.text_speed = text_speed
 
     def read_file(self): 
         with open(self.file_name) as f: 
@@ -60,15 +62,32 @@ class Speed_reader:
 
         return content, sentence_index, i, end_of_sentence_flag
 
+    def change_text_speed(self, speed_change):
+        if self.text_speed + speed_change > 0:
+            self.text_speed = self.text_speed + speed_change
+
     def start_tkinter(self): 
         
+        def Speed_up():
+            speed_up_button = tk.Button(root, text="Speed Up", command= lambda: self.change_text_speed(-25))
+            speed_up_button.pack()
+
+        def Speed_down():
+            speed_down_button = tk.Button(root, text="Speed Down", command= lambda: self.change_text_speed(25))
+            speed_down_button.pack()
+
         def Draw():
             global text
 
+            Speed_up()
+            Speed_down()
+
             frame=tk.Frame(root,width=100,height=100,relief='solid',bd=1)
-            frame.place(x=10,y=10)
+            frame.place(x=200,y=200)
             text=tk.Label(frame)
             text.pack()
+
+            
 
         def Refresher():
             global text 
@@ -76,10 +95,11 @@ class Speed_reader:
             content, self.sentence_index, self.word_index, end_of_sentence_flag = self.get_output(self.sentence_index, self.word_index)
             text.configure(text=content, foreground="red") if end_of_sentence_flag  else text.configure(text=content, foreground = "black")
             
-            root.after(500, Refresher)
+            root.after(self.text_speed, Refresher)
 
 
         root = tk.Tk()
+        root.geometry("500x500")
         Draw()
         Refresher()
         root.mainloop()
