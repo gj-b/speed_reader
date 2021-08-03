@@ -7,7 +7,7 @@ import tkinter as tk
 import random
 
 class Speed_reader:
-    def __init__(self, file_name=None, refresh_rate=500) -> None:
+    def __init__(self, file_name=None, refresh_rate=750) -> None:
         
         self.waiting_for_file_flag = 1
         self.file_name = file_name
@@ -184,14 +184,12 @@ class Speed_reader:
                 else: 
                     self.initialize_word_list()
                     self.waiting_for_file_flag = 0
-            
-            if self.initial_frame_flag:
-                frame = Create_text_frame() 
-                self.initial_frame_flag = 0
-                self.new_frame_flag = 0
 
             if self.new_frame_flag:
-                Delete_text_frame(frame)
+                if self.initial_frame_flag: 
+                    self.initial_frame_flag = 0
+                else:
+                    Delete_text_frame(frame)
                 Create_text_frame() 
                 self.new_frame_flag = 0
             
@@ -200,7 +198,6 @@ class Speed_reader:
                 self.sentence_counter += 1 
 
             if self.sentence_counter == self.num_sentence_before_place_change:
-                #Delete_text_frame(frame)
                 self.sentence_counter = 0
                 self.new_frame_flag = 1
 
