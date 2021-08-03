@@ -27,6 +27,7 @@ class Speed_reader:
         self.refresh_rate = refresh_rate
         self.pause_flag = 0
         self.new_frame_flag = 1
+        self.initial_frame_flag = 1
 
     def initialize_word_list(self):
         self.file_contents = self.read_file()
@@ -165,7 +166,7 @@ class Speed_reader:
 
             new_x = random.randint(0,700)
             new_y = random.randint(150,400)
-            frame=tk.Frame(root,width=100,height=100,relief='solid',bd=1)
+            frame=tk.Frame(root,width=100,height=100,relief='flat',bd=1)
             frame.place(x=new_x,y=new_y)
             text=tk.Label(frame)
             text.pack()
@@ -184,8 +185,14 @@ class Speed_reader:
                     self.initialize_word_list()
                     self.waiting_for_file_flag = 0
             
-            if self.new_frame_flag:
+            if self.initial_frame_flag:
                 frame = Create_text_frame() 
+                self.initial_frame_flag = 0
+                self.new_frame_flag = 0
+
+            if self.new_frame_flag:
+                Delete_text_frame(frame)
+                Create_text_frame() 
                 self.new_frame_flag = 0
             
             text.configure(text=self.content, foreground="red") if self.end_of_sentence_flag  else text.configure(text=self.content, foreground = "black")
@@ -193,7 +200,7 @@ class Speed_reader:
                 self.sentence_counter += 1 
 
             if self.sentence_counter == self.num_sentence_before_place_change:
-                Delete_text_frame(frame)
+                #Delete_text_frame(frame)
                 self.sentence_counter = 0
                 self.new_frame_flag = 1
 
