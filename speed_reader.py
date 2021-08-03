@@ -4,6 +4,7 @@ from time import sleep
 import time
 from termcolor import colored
 import tkinter as tk
+import random
 
 class Speed_reader:
     def __init__(self, file_name=None, refresh_rate=500) -> None:
@@ -20,9 +21,12 @@ class Speed_reader:
         self.num_words_per_output = 3
         self.content = ""
         self.end_of_sentence_flag = 0 
+        self.sentence_counter = 0
+        self.num_sentence_before_place_change = 3
 
         self.refresh_rate = refresh_rate
         self.pause_flag = 0
+        self.new_frame_flag = 1
 
     def initialize_word_list(self):
         self.file_contents = self.read_file()
@@ -91,6 +95,10 @@ class Speed_reader:
         if self.num_words_per_output + change > 0: 
             self.num_words_per_output = self.num_words_per_output + change
 
+    def adjust_sentence_placement_num(self, change):
+        if self.num_sentence_before_place_change + change >= 1:
+            self.num_sentence_before_place_change += change 
+
     def start_tkinter(self): 
         
         def pick_file(event=None):
@@ -126,6 +134,19 @@ class Speed_reader:
             decrement_num_words = tk.Button(root, text = "Remove 1 Word per Output", command= lambda: self.adjust_num_words(-1))
             decrement_num_words.place(x=450, y=65)
 
+        def Increment_sentence_number_before_placement_change():
+            increment_sentence_change = tk.Button(root, 
+                text = f"Increment number of sentences before change.", 
+                command = lambda: self.adjust_sentence_placement_num(1))
+            increment_sentence_change.place(x=450, y=95)
+
+        def Decrement_sentence_number_before_placement_change():
+            decrement_sentence_change = tk.Button(root, 
+                text = f"Decrement number of sentences before change.", 
+                command = lambda: self.adjust_sentence_placement_num(-1))
+            decrement_sentence_change.place(x=450, y=125)
+
+
         def Draw():
             global text
             
@@ -136,14 +157,25 @@ class Speed_reader:
             Increment_num_words_output()
             Decrement_num_words_output()
             Go_back_ten_sentences()
+            Increment_sentence_number_before_placement_change()
+            Decrement_sentence_number_before_placement_change()
 
+        def Create_text_frame():
+            global text, frame 
+
+            new_x = random.randint(0,700)
+            new_y = random.randint(150,400)
             frame=tk.Frame(root,width=100,height=100,relief='solid',bd=1)
-            frame.place(x=200,y=300)
+            frame.place(x=new_x,y=new_y)
             text=tk.Label(frame)
             text.pack()
+            return frame
+
+        def Delete_text_frame(frame):
+            frame.place_forget() 
 
         def Refresher():
-            global text 
+            global text, frame
             if not self.pause_flag and not self.waiting_for_file_flag:
                 self.content, self.sentence_index, self.word_index, self.end_of_sentence_flag = self.get_output(self.sentence_index, self.word_index)
             elif self.waiting_for_file_flag:
@@ -151,13 +183,24 @@ class Speed_reader:
                 else: 
                     self.initialize_word_list()
                     self.waiting_for_file_flag = 0
-                
-            text.configure(text=self.content, foreground="red") if self.end_of_sentence_flag  else text.configure(text=self.content, foreground = "black")
             
+            if self.new_frame_flag:
+                frame = Create_text_frame() 
+                self.new_frame_flag = 0
+            
+            text.configure(text=self.content, foreground="red") if self.end_of_sentence_flag  else text.configure(text=self.content, foreground = "black")
+            if self.end_of_sentence_flag:
+                self.sentence_counter += 1 
+
+            if self.sentence_counter == self.num_sentence_before_place_change:
+                Delete_text_frame(frame)
+                self.sentence_counter = 0
+                self.new_frame_flag = 1
+
             root.after(self.refresh_rate, Refresher)
 
         root = tk.Tk()
-        root.geometry("700x500")
+        root.geometry("850x500")
         Draw()
         Refresher()
         root.mainloop()
