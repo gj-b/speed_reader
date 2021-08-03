@@ -62,7 +62,7 @@ class Speed_reader:
         else: 
             output_amount = num_words_left
 
-        content = ""
+        content = "" #test
         for i in range(word_index, word_index+output_amount):
             content += sentence[i] + " "
 
