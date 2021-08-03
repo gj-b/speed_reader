@@ -85,6 +85,9 @@ class Speed_reader:
         if self.sentence_index - num_sentences > 0: 
             self.sentence_index = self.sentence_index - num_sentences
             self.word_index = 0
+        else: 
+            self.sentence_index = 0
+            self.word_index = 0
 
     def adjust_num_words(self, change):
         if self.num_words_per_output + change > 0: 
@@ -96,7 +99,6 @@ class Speed_reader:
             filename = tk.filedialog.askopenfilename()
             if filename:
                 self.file_name = filename
-                #self.waiting_for_file_flag = 0
 
         def Load_file():
             file_button = tk.Button(root, text="Pick File", command= pick_file)
@@ -111,7 +113,7 @@ class Speed_reader:
             speed_down_button.pack()
 
         def Pause():
-            pause_button = tk.Button(root, text="Pause", command= lambda:self.change_pause_flag())
+            pause_button = tk.Button(root, text="Pause/Resume", command= lambda:self.change_pause_flag())
             pause_button.pack()
 
         def Go_back_ten_sentences():
@@ -126,8 +128,6 @@ class Speed_reader:
             decrement_num_words = tk.Button(root, text = "Remove 1 Word per Output", command= lambda: self.adjust_num_words(-1))
             decrement_num_words.pack()
 
-        
-
         def Draw():
             global text
             
@@ -140,7 +140,7 @@ class Speed_reader:
             Go_back_ten_sentences()
 
             frame=tk.Frame(root,width=100,height=100,relief='solid',bd=1)
-            frame.place(x=200,y=200)
+            frame.place(x=200,y=300)
             text=tk.Label(frame)
             text.pack()
 
