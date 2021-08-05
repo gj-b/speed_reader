@@ -133,24 +133,25 @@ class Speed_reader:
 
         def Decrement_num_words_output():
             decrement_num_words = tk.Button(root, text = "Remove 1 Word per Output", command= lambda: self.adjust_num_words(-1))
-            decrement_num_words.place(x=450, y=65)
+            decrement_num_words.place(x=450, y=75)
 
         def Increment_sentence_number_before_placement_change():
+            global increment_sentence_change
+            increment_sentence_text = f"Increment number of sentences before change. \n Curr: {self.num_sentence_before_place_change}"
             increment_sentence_change = tk.Button(root, 
-                text = f"Increment number of sentences before change.", 
+                text = increment_sentence_text, 
                 command = lambda: self.adjust_sentence_placement_num(1))
             increment_sentence_change.place(x=450, y=95)
 
         def Decrement_sentence_number_before_placement_change():
+            global decrement_sentence_change
             decrement_sentence_change = tk.Button(root, 
-                text = f"Decrement number of sentences before change.", 
+                text = f"Decrement number of sentences before change. \n Curr: {self.num_sentence_before_place_change}", 
                 command = lambda: self.adjust_sentence_placement_num(-1))
             decrement_sentence_change.place(x=450, y=125)
 
 
         def Draw():
-            global text
-            
             Load_file()
             Speed_down()
             Pause()
@@ -194,6 +195,10 @@ class Speed_reader:
                 self.new_frame_flag = 0
             
             text.configure(text=self.content, foreground="red") if self.end_of_sentence_flag  else text.configure(text=self.content, foreground = "black")
+            
+            increment_sentence_change.configure(text=f"Increment number of sentences before change. \n Curr: {self.num_sentence_before_place_change}")
+            decrement_sentence_change.configure(text=f"Decrement number of sentences before change. \n Curr: {self.num_sentence_before_place_change}")
+            
             if self.end_of_sentence_flag:
                 self.sentence_counter += 1 
 
