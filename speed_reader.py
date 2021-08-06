@@ -9,12 +9,14 @@ import random
 class Speed_reader:
     def __init__(self, file_name=None, refresh_rate=750) -> None:
         
-        self.waiting_for_file_flag = 1
+        def is_file(file_name):
+            return True if file_name else False
+
+        self.waiting_for_file_flag = not is_file(file_name)
         self.file_name = file_name
 
-        if self.file_name != None:
-            self.waiting_for_file_flag = 0
-            self.initialize_word_list()
+        if is_file(file_name):
+            self.list_of_list_of_words = self.initialize_word_list(self.file_name)
 
         #Setting default values for text output
         self.sentence_index, self.word_index = 0, 0
@@ -29,26 +31,34 @@ class Speed_reader:
         self.new_frame_flag = 1
         self.initial_frame_flag = 1
 
-    def initialize_word_list(self):
-        self.file_contents = self.read_file()
-        self.all_sentences = self.file_into_sentences()
-        self.list_of_list_of_words = self.sentences_into_word_lists()
+    def initialize_word_list(self, file_name):
 
-    def read_file(self): 
-        with open(self.file_name) as f: 
-            return f.read()
-    
-    def file_into_sentences(self):
-        return nltk.sent_tokenize(self.file_contents)
+        def read_file(file_name): 
+            with open(file_name) as f: 
+                return f.read()
 
-    def sentence_into_words(self, sentence):
-        return nltk.word_tokenize(sentence)
+        def file_into_sentences(file_contents):
+            return nltk.sent_tokenize(file_contents)
 
-    def sentences_into_word_lists(self):
-        word_list = []
-        for sentence in self.all_sentences : 
-            word_list.append( self.sentence_into_words(sentence) )
-        return word_list
+        def sentences_into_word_lists(sentences):
+            def sentence_into_words(sentence):
+                return nltk.word_tokenize(sentence)
+
+            word_list = []
+            for sentence in sentences : 
+                word_list.append( sentence_into_words(sentence) )
+            return word_list
+
+        file_contents = read_file(file_name)
+        sentences = file_into_sentences(file_contents)
+        list_of_list_of_words = sentences_into_word_lists(sentences)
+        return list_of_list_of_words
+
+    def reset_file_variables(self):
+        self.sentence_index, self.word_index = 0, 0
+        self.content = ""
+        self.end_of_sentence_flag = 0 
+        self.sentence_counter = 0
 
     def get_output(self, sentence_index, word_index):
         sentence = []
@@ -178,12 +188,14 @@ class Speed_reader:
 
         def Refresher():
             global text, frame
+
             if not self.pause_flag and not self.waiting_for_file_flag:
                 self.content, self.sentence_index, self.word_index, self.end_of_sentence_flag = self.get_output(self.sentence_index, self.word_index)
             elif self.waiting_for_file_flag:
                 if self.file_name == None: pass
                 else: 
-                    self.initialize_word_list()
+                    self.reset_file_variables()
+                    self.list_of_list_of_words = self.initialize_word_list(self.file_name)
                     self.waiting_for_file_flag = 0
 
             if self.new_frame_flag:
