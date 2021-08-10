@@ -18,14 +18,12 @@ class Speed_reader:
         if is_file(file_name):
             self.list_of_list_of_words = self.initialize_word_list(self.file_name)
 
-        #Setting default values for text output
+        # Default values for text output.
         self.sentence_index, self.word_index = 0, 0
-        self.num_words_per_output = 3
-        self.content = ""
-        self.end_of_sentence_flag = 0 
-        self.sentence_counter = 0
-        self.num_sentence_before_place_change = 3
+        self.content, self.num_words_per_output, self.end_of_sentence_flag = "", 3, 0
+        self.sentence_counter, self.num_sentence_before_place_change = 0, 3
 
+        # Default values for tkinter use. 
         self.refresh_rate = refresh_rate
         self.pause_flag = 0
         self.new_frame_flag = 1
@@ -56,36 +54,33 @@ class Speed_reader:
 
     def reset_file_variables(self):
         self.sentence_index, self.word_index = 0, 0
-        self.content = ""
-        self.end_of_sentence_flag = 0 
-        self.sentence_counter = 0
+        self.content, self.num_words_per_output, self.end_of_sentence_flag = "", 3, 0
+        self.sentence_counter, self.num_sentence_before_place_change = 0, 3
 
-    def get_output(self, sentence_index, word_index):
+    def get_output(self, sentenceIndex, innerSentenceIndex):
         sentence = []
-        if sentence_index < len(self.list_of_list_of_words):
-            sentence = self.list_of_list_of_words[sentence_index]
+        if sentenceIndex < len(self.list_of_list_of_words):
+            sentence = self.list_of_list_of_words[sentenceIndex]
 
-        num_words_left = len(sentence) - word_index
+        numWordsLeft = len(sentence) - innerSentenceIndex
+        outputSize = min(numWordsLeft, self.num_words_per_output)
 
-        if num_words_left > self.num_words_per_output:
-            output_amount = self.num_words_per_output
-        else: 
-            output_amount = num_words_left
-
-        content = "" #test2
-        for i in range(word_index, word_index+output_amount):
+        # I think that this code will work but want to add testing before trying to change it. 
+        #content = ' '.join(sentence[innerSentenceIndex:innerSentenceIndex + outputSize])
+        content = ""
+        for i in range(innerSentenceIndex, innerSentenceIndex + outputSize):
             content += sentence[i] + " "
 
-        if num_words_left > self.num_words_per_output:
-            word_index += self.num_words_per_output
+        if numWordsLeft > self.num_words_per_output:
+            innerSentenceIndex += self.num_words_per_output
             end_of_sentence_flag = 0
-            sentence_index += 0
+            sentenceIndex += 0
         else: 
-            word_index = 0
+            innerSentenceIndex = 0
             end_of_sentence_flag = 1
-            sentence_index += 1
+            sentenceIndex += 1
 
-        return content, sentence_index, word_index, end_of_sentence_flag
+        return content, sentenceIndex, innerSentenceIndex, end_of_sentence_flag
 
     def change_refresh_rate(self, speed_change):
         if self.refresh_rate + speed_change > 0:
