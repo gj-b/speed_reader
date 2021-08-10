@@ -24,8 +24,8 @@ class Speed_reader:
         self.sentence_counter, self.num_sentence_before_place_change = 0, 3
 
         # Default values for tkinter use. 
-        self.refresh_rate = refresh_rate
-        self.pause_flag = 0
+        self.refreshRate = refresh_rate
+        self.pauseFlag = 0
         self.new_frame_flag = 1
         self.initial_frame_flag = 1
 
@@ -77,28 +77,37 @@ class Speed_reader:
 
         return content, innerSentenceIndex, end_of_sentence_flag, sentenceIndex
 
-    def change_refresh_rate(self, speed_change):
-        if self.refresh_rate + speed_change > 0:
-            self.refresh_rate = self.refresh_rate + speed_change
+    def changeRefreshRate(self, refreshRate, speedChange):
+        if refreshRate + speedChange > 0:
+            self.refreshRate = refreshRate + speedChange
+            return refreshRate + speedChange
+        return refreshRate
 
-    def flip_pause_flag(self):
-        self.pause_flag = not self.pause_flag
+    def flipPauseFlag(self, pauseFlag):
+        self.pauseFlag = not pauseFlag
+        return not pauseFlag
 
-    def go_back_x_sentences(self, num_sentences=10):
-        if self.sentence_index - num_sentences > 0: 
-            self.sentence_index = self.sentence_index - num_sentences
-            self.word_index = 0
+    def displaceSentenceIndex(self, sentenceIndex, numSentences=-10):
+        if sentenceIndex + numSentences > 0: 
+            sentenceIndex = sentenceIndex + numSentences
         else: 
-            self.sentence_index = 0
-            self.word_index = 0
+            sentenceIndex = 0
 
-    def adjust_num_words(self, change):
-        if self.num_words_per_output + change > 0: 
-            self.num_words_per_output = self.num_words_per_output + change
+        self.word_index = 0
+        self.sentence_index = sentenceIndex
+        return sentenceIndex
 
-    def adjust_sentence_placement_num(self, change):
-        if self.num_sentence_before_place_change + change >= 1:
-            self.num_sentence_before_place_change += change 
+    def changeNumWordsOutput(self, numWordsOutput, change):
+        if numWordsOutput + change > 0: 
+            self.num_words_per_output = numWordsOutput + change
+            return numWordsOutput + change
+        return numWordsOutput
+
+    def changeNumSentencesPerPlacement(self, numSentencesPlacedPerLoc, change):
+        if numSentencesPlacedPerLoc + change >= 1:
+            self.num_sentence_before_place_change = numSentencesPlacedPerLoc + change
+            return numSentencesPlacedPerLoc + change
+        return numSentencesPlacedPerLoc
 
     def start_tkinter(self): 
         
@@ -112,27 +121,27 @@ class Speed_reader:
             file_button.place(x=5, y=5)
 
         def Speed_up():
-            speed_up_button = tk.Button(root, text="Speed Up", command= lambda: self.change_refresh_rate(-25))
+            speed_up_button = tk.Button(root, text="Speed Up", command= lambda: self.changeRefreshRate(self.refreshRate, -25))
             speed_up_button.place(x=225, y=65)
 
         def Speed_down():
-            speed_down_button = tk.Button(root, text="Speed Down", command= lambda: self.change_refresh_rate(25))
+            speed_down_button = tk.Button(root, text="Speed Down", command= lambda: self.changeRefreshRate(self.refreshRate, 25))
             speed_down_button.place(x=225, y=5)
 
         def Pause():
-            pause_button = tk.Button(root, text="Pause/Resume", command= lambda:self.flip_pause_flag())
+            pause_button = tk.Button(root, text="Pause/Resume", command= lambda:self.flipPauseFlag(self.pauseFlag))
             pause_button.place(x=225, y=35)
 
         def Go_back_ten_sentences():
-            go_back_button = tk.Button(root, text = "Go Back 10 Sentences.", command= lambda: self.go_back_x_sentences(10))
+            go_back_button = tk.Button(root, text = "Go Back 10 Sentences.", command= lambda: self.displaceSentenceIndex(self.sentence_index, 10))
             go_back_button.place(x=450, y=5)
 
         def Increment_num_words_output():
-            increment_num_words = tk.Button(root, text = "Add 1 Word per Output", command= lambda: self.adjust_num_words(1))
+            increment_num_words = tk.Button(root, text = "Add 1 Word per Output", command= lambda: self.changeNumWordsOutput(self.num_words_per_output, 1))
             increment_num_words.place(x=450, y=35)
 
         def Decrement_num_words_output():
-            decrement_num_words = tk.Button(root, text = "Remove 1 Word per Output", command= lambda: self.adjust_num_words(-1))
+            decrement_num_words = tk.Button(root, text = "Remove 1 Word per Output", command= lambda: self.changeNumWordsOutput(self.num_words_per_output, -1))
             decrement_num_words.place(x=450, y=75)
 
         def Increment_sentence_number_before_placement_change():
@@ -140,14 +149,14 @@ class Speed_reader:
             increment_sentence_text = f"Increment number of sentences before change. \n Curr: {self.num_sentence_before_place_change}"
             increment_sentence_change = tk.Button(root, 
                 text = increment_sentence_text, 
-                command = lambda: self.adjust_sentence_placement_num(1))
+                command = lambda: self.changeNumSentencesPerPlacement(self.num_sentence_before_place_change, 1))
             increment_sentence_change.place(x=450, y=95)
 
         def Decrement_sentence_number_before_placement_change():
             global decrement_sentence_change
             decrement_sentence_change = tk.Button(root, 
                 text = f"Decrement number of sentences before change. \n Curr: {self.num_sentence_before_place_change}", 
-                command = lambda: self.adjust_sentence_placement_num(-1))
+                command = lambda: self.changeNumSentencesPerPlacement(self.num_sentence_before_place_change, -1))
             decrement_sentence_change.place(x=450, y=125)
 
 
@@ -179,7 +188,7 @@ class Speed_reader:
         def Refresher():
             global text, frame
 
-            if not self.pause_flag and not self.waiting_for_file_flag:
+            if not self.pauseFlag and not self.waiting_for_file_flag:
                 self.content, self.word_index, self.end_of_sentence_flag, self.sentence_index = self.get_output(self.sentence_index, self.word_index, self.num_words_per_output)
             elif self.waiting_for_file_flag:
                 if self.file_name == None: pass
@@ -208,7 +217,7 @@ class Speed_reader:
                 self.sentence_counter = 0
                 self.new_frame_flag = 1
 
-            root.after(self.refresh_rate, Refresher)
+            root.after(self.refreshRate, Refresher)
 
         root = tk.Tk()
         root.geometry("850x500")
