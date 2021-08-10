@@ -57,30 +57,25 @@ class Speed_reader:
         self.content, self.num_words_per_output, self.end_of_sentence_flag = "", 3, 0
         self.sentence_counter, self.num_sentence_before_place_change = 0, 3
 
-    def get_output(self, sentenceIndex, innerSentenceIndex):
+    def get_output(self, sentenceIndex, innerSentenceIndex, numWordsToOutput):
         sentence = []
         if sentenceIndex < len(self.list_of_list_of_words):
             sentence = self.list_of_list_of_words[sentenceIndex]
 
         numWordsLeft = len(sentence) - innerSentenceIndex
-        outputSize = min(numWordsLeft, self.num_words_per_output)
+        outputSize = min(numWordsLeft, numWordsToOutput)
 
-        # I think that this code will work but want to add testing before trying to change it. 
-        #content = ' '.join(sentence[innerSentenceIndex:innerSentenceIndex + outputSize])
-        content = ""
-        for i in range(innerSentenceIndex, innerSentenceIndex + outputSize):
-            content += sentence[i] + " "
+        content = ' '.join(sentence[innerSentenceIndex:innerSentenceIndex + outputSize])
 
-        if numWordsLeft > self.num_words_per_output:
-            innerSentenceIndex += self.num_words_per_output
+        if numWordsLeft > outputSize:           # next get_output() is the same sentence
+            innerSentenceIndex += outputSize
             end_of_sentence_flag = 0
-            sentenceIndex += 0
-        else: 
+        else:                                   # next get_output() is the next sentence
             innerSentenceIndex = 0
             end_of_sentence_flag = 1
             sentenceIndex += 1
 
-        return content, sentenceIndex, innerSentenceIndex, end_of_sentence_flag
+        return content, innerSentenceIndex, end_of_sentence_flag, sentenceIndex
 
     def change_refresh_rate(self, speed_change):
         if self.refresh_rate + speed_change > 0:
@@ -185,7 +180,7 @@ class Speed_reader:
             global text, frame
 
             if not self.pause_flag and not self.waiting_for_file_flag:
-                self.content, self.sentence_index, self.word_index, self.end_of_sentence_flag = self.get_output(self.sentence_index, self.word_index)
+                self.content, self.word_index, self.end_of_sentence_flag, self.sentence_index = self.get_output(self.sentence_index, self.word_index, self.num_words_per_output)
             elif self.waiting_for_file_flag:
                 if self.file_name == None: pass
                 else: 

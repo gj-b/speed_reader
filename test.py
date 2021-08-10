@@ -18,7 +18,18 @@ class TestSpeedReader(unittest.TestCase):
                                         ['Let', "'s", 'see', 'if', 'it', 'can', 'do', 'it', '.']])
         
     def test_get_output(self):
-        pass
+        test_empty_file = Speed_reader("Test_files/empty_msg.txt")
+        self.assertEqual(test_empty_file.get_output(0,0, 3), ('', 0, 1, 1))
+
+        test_small_file = Speed_reader("Test_files/short_msg.txt")
+        self.assertEqual(test_small_file.get_output(0,0, 3), ('This is a', 3, 0, 0))
+        self.assertEqual(test_small_file.get_output(0,3, 5), ('short message .', 0, 1, 1))
+
+        self.assertEqual(test_small_file.get_output(2,0, 4), ('Let \'s see if', 4, 0, 2))
+        self.assertEqual(test_small_file.get_output(2, 4, 1), ('it', 5, 0, 2))
+        self.assertEqual(test_small_file.get_output(2, 5, 3), ('can do it', 8, 0, 2))
+        self.assertEqual(test_small_file.get_output(2, 8, 1), ('.', 0, 1, 3))
+        
 
     def test_button_inner_functionality(self):
         pass
