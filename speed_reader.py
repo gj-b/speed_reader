@@ -159,6 +159,18 @@ class Speed_reader:
                 command = lambda: self.changeNumSentencesPerPlacement(self.num_sentence_before_place_change, -1))
             decrement_sentence_change.place(x=450, y=125)
 
+        def Create_text_frame():
+            global text, frame 
+            new_x = random.randint(0,700)
+            new_y = random.randint(150,400)
+            frame=tk.Frame(root,width=100,height=100,relief='flat',bd=1)
+            frame.place(x=new_x,y=new_y)
+            text=tk.Label(frame)
+            text.pack()
+            return frame
+
+        def Delete_text_frame(frame):
+            frame.place_forget() 
 
         def Draw():
             Load_file()
@@ -171,31 +183,14 @@ class Speed_reader:
             Increment_sentence_number_before_placement_change()
             Decrement_sentence_number_before_placement_change()
 
-        def Create_text_frame():
-            global text, frame 
-
-            new_x = random.randint(0,700)
-            new_y = random.randint(150,400)
-            frame=tk.Frame(root,width=100,height=100,relief='flat',bd=1)
-            frame.place(x=new_x,y=new_y)
-            text=tk.Label(frame)
-            text.pack()
-            return frame
-
-        def Delete_text_frame(frame):
-            frame.place_forget() 
-
         def Refresher():
-            global text, frame
 
-            if not self.pauseFlag and not self.waiting_for_file_flag:
+            if not (self.pauseFlag or self.waiting_for_file_flag):
                 self.content, self.word_index, self.end_of_sentence_flag, self.sentence_index = self.get_output(self.sentence_index, self.word_index, self.num_words_per_output)
-            elif self.waiting_for_file_flag:
-                if self.file_name == None: pass
-                else: 
-                    self.reset_file_variables()
-                    self.list_of_list_of_words = self.initialize_word_list(self.file_name)
-                    self.waiting_for_file_flag = 0
+            elif self.waiting_for_file_flag and self.file_name != None:
+                self.reset_file_variables()
+                self.list_of_list_of_words = self.initialize_word_list(self.file_name)
+                self.waiting_for_file_flag = 0
 
             if self.new_frame_flag:
                 if self.initial_frame_flag: 
@@ -205,7 +200,8 @@ class Speed_reader:
                 Create_text_frame() 
                 self.new_frame_flag = 0
             
-            text.configure(text=self.content, foreground="red") if self.end_of_sentence_flag  else text.configure(text=self.content, foreground = "black")
+            _foreground = "red" if self.end_of_sentence_flag else  "black"
+            text.configure(text=self.content, foreground= _foreground) if self.end_of_sentence_flag  else text.configure(text=self.content, foreground = _foreground)
             
             increment_sentence_change.configure(text=f"Increment number of sentences before change. \n Curr: {self.num_sentence_before_place_change}")
             decrement_sentence_change.configure(text=f"Decrement number of sentences before change. \n Curr: {self.num_sentence_before_place_change}")
