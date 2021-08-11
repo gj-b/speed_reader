@@ -1,4 +1,5 @@
-Why? I find that I can read faster when I reduce my amount of eye movement. Speed reading takes advantage of that by briefly fixing the placement of the outputted sentences.
+Reason for project? 
+	I am better able to focus when reading if I reduce my eye movement. Speed reading takes advantage of that by fixing the placement of the outputted sentences.
 
 Implementation (through exe.py):
 	1. Starts the GUI. 
