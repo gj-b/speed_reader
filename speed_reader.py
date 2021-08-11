@@ -115,6 +115,7 @@ class Speed_reader:
             filename = tk.filedialog.askopenfilename()
             if filename:
                 self.file_name = filename
+                self.waiting_for_file_flag = 1
 
         def Load_file():
             file_button = tk.Button(root, text="Pick File", command= pick_file)
