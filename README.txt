@@ -1,26 +1,22 @@
-Why: The human brain is better able to focus when it stares at one place. Speed reading takes advantage of that by fixing the placement of the outputted words.
+Why? I find that I can read faster when I reduce my amount of eye movement. Speed reading takes advantage of that by briefly fixing the placement of the outputted sentences.
 
+Implementation (through exe.py):
+	1. Starts the GUI. 
+	2. Pick a file (through user input).  
+	3. Tokenize file into sentences, and then into words.
+	4. Create next ouput message with the now-tokenized file. 
+	5. Output new output, works by refreshing output every x milliseconds (can be user-specified). 
 
-Implementation
-	1. Read in pages of text file. 
-	2. Split curr_page into x number of curr_sentence
-	
-Wrap-in keyboard / button shortcuts: 
-	1. Read in pages of text file. 
-	2. Split curr_page into sentences. 
-	3. Split curr_sentence into x_word lengths.
-	4. Print curr_string. 
-	5. Time fuction pause here in order to control the speed of output. 
-	EOL.
+Available GUI Buttons:
+	"Pick File" : Import a file to read from. 
+	"Speed Down" : Reduce the refresh rate by 25 milliseconds. 
+	"Pause/Resume" : Pauses or resumes the production of new output with a flag, and not by editing the refresh rate. 
+	"Speed Up"   : Increase the refresh rate by 25 milliseconds. 
+	"Go back 10 Sentences" : Move the sentence_index back by 10. 
+	"Remove 1 Word per Output" : Removes 1 word per output. 
+	"Add 1 Word per Output" :  Adds 1 word per output. 
+	"Decrement Number of Sentences before Change" : Decreases the number of sentences output before its location moves by 1. 
+	"Increment Number of Sentences before Change" : Increases the number of sentences output before its location moves by 1.
 
-GUI: Has way to import file through button clicks. But can also import file through terminal when run the program. 
-Outputs the words onto the screen. 
-Buttons to speed up / slow down / pause (also shows keyboard shortcuts).
-
-Can:
-Import a text file. 
-Change the speed of text output. 
-Change the number of words being output at once.
-Advanced Configurations: Change based on sentence lengths (8 words: 2,3,3 | 3,3,2 | ...). Change color of text depending on word type | Sentence type (Questions could be in green, shouts in red; Could also make associations with who is speaking).
-Pause it. 
-Use keyboard shortcuts (p|P --> pause, right_arrow --> speedup, left_arrow ->speeddown).
+Testing: 
+	test_speed_reader.py: Tests the tokenation of a file, the get_output() function, and the functionality of each button. 

@@ -120,10 +120,6 @@ class Speed_reader:
             file_button = tk.Button(root, text="Pick File", command= pick_file)
             file_button.place(x=5, y=5)
 
-        def Speed_up():
-            speed_up_button = tk.Button(root, text="Speed Up", command= lambda: self.changeRefreshRate(self.refreshRate, -25))
-            speed_up_button.place(x=225, y=65)
-
         def Speed_down():
             speed_down_button = tk.Button(root, text="Speed Down", command= lambda: self.changeRefreshRate(self.refreshRate, 25))
             speed_down_button.place(x=225, y=5)
@@ -132,37 +128,41 @@ class Speed_reader:
             pause_button = tk.Button(root, text="Pause/Resume", command= lambda:self.flipPauseFlag(self.pauseFlag))
             pause_button.place(x=225, y=35)
 
-        def Go_back_ten_sentences():
-            go_back_button = tk.Button(root, text = "Go Back 10 Sentences.", command= lambda: self.displaceSentenceIndex(self.sentence_index, 10))
-            go_back_button.place(x=450, y=5)
+        def Speed_up():
+            speed_up_button = tk.Button(root, text="Speed Up", command= lambda: self.changeRefreshRate(self.refreshRate, -25))
+            speed_up_button.place(x=225, y=65)
 
-        def Increment_num_words_output():
-            increment_num_words = tk.Button(root, text = "Add 1 Word per Output", command= lambda: self.changeNumWordsOutput(self.num_words_per_output, 1))
-            increment_num_words.place(x=450, y=35)
+        def Go_back_ten_sentences():
+            go_back_button = tk.Button(root, text = "Go Back 10 Sentences", command= lambda: self.displaceSentenceIndex(self.sentence_index, 10))
+            go_back_button.place(x=450, y=5)
 
         def Decrement_num_words_output():
             decrement_num_words = tk.Button(root, text = "Remove 1 Word per Output", command= lambda: self.changeNumWordsOutput(self.num_words_per_output, -1))
-            decrement_num_words.place(x=450, y=75)
+            decrement_num_words.place(x=450, y=35)
 
-        def Increment_sentence_number_before_placement_change():
-            global increment_sentence_change
-            increment_sentence_text = f"Increment number of sentences before change. \n Curr: {self.num_sentence_before_place_change}"
-            increment_sentence_change = tk.Button(root, 
-                text = increment_sentence_text, 
-                command = lambda: self.changeNumSentencesPerPlacement(self.num_sentence_before_place_change, 1))
-            increment_sentence_change.place(x=450, y=95)
+        def Increment_num_words_output():
+            increment_num_words = tk.Button(root, text = "Add 1 Word per Output", command= lambda: self.changeNumWordsOutput(self.num_words_per_output, 1))
+            increment_num_words.place(x=450, y=65)
 
         def Decrement_sentence_number_before_placement_change():
             global decrement_sentence_change
             decrement_sentence_change = tk.Button(root, 
-                text = f"Decrement number of sentences before change. \n Curr: {self.num_sentence_before_place_change}", 
+                text = f"Decrement Number of Sentences before Change \n Curr: {self.num_sentence_before_place_change}", 
                 command = lambda: self.changeNumSentencesPerPlacement(self.num_sentence_before_place_change, -1))
-            decrement_sentence_change.place(x=450, y=125)
+            decrement_sentence_change.place(x=450, y=95)
+
+        def Increment_sentence_number_before_placement_change():
+            global increment_sentence_change
+            increment_sentence_text = f"Increment Number of Sentences before Change \n Curr: {self.num_sentence_before_place_change}"
+            increment_sentence_change = tk.Button(root, 
+                text = increment_sentence_text, 
+                command = lambda: self.changeNumSentencesPerPlacement(self.num_sentence_before_place_change, 1))
+            increment_sentence_change.place(x=450, y=135)
 
         def Create_text_frame():
             global text, frame 
             new_x = random.randint(0,700)
-            new_y = random.randint(150,400)
+            new_y = random.randint(170,400)
             frame=tk.Frame(root,width=100,height=100,relief='flat',bd=1)
             frame.place(x=new_x,y=new_y)
             text=tk.Label(frame)
@@ -209,7 +209,7 @@ class Speed_reader:
             if self.end_of_sentence_flag:
                 self.sentence_counter += 1 
 
-            if self.sentence_counter == self.num_sentence_before_place_change:
+            if self.sentence_counter >= self.num_sentence_before_place_change:
                 self.sentence_counter = 0
                 self.new_frame_flag = 1
 
@@ -220,3 +220,4 @@ class Speed_reader:
         Draw()
         Refresher()
         root.mainloop()
+
